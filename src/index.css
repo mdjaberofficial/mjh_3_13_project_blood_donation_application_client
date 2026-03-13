@@ -1,0 +1,52 @@
+@import "tailwindcss";
+@plugin "daisyui" {
+   themes: light --default, dark;
+}
+
+/* Changes could be done if necessary AI can add multiple options here */
+@plugin "daisyui/theme" {
+  name: "light";
+  default: true;
+  /* Core brand colors */
+  --color-primary: #dc2626;     /* Crimson Red - for primary actions like 'Donate Now' */
+  --color-secondary: #0f172a;   /* Deep Slate - for professional, high-contrast secondary elements */
+  --color-accent: #0284c7;      /* Medical Blue - for subtle highlights and trust-building UI */
+  
+  /* Text and background hierarchy */
+  --color-neutral: #1f2937;     /* Dark Gray for primary text */
+  --color-base-100: #ffffff;    /* Pure white for main background (clean, sterile look) */
+  --color-base-200: #f8fafc;    /* Off-white for section separations */
+  --color-base-300: #f1f5f9;    /* Light gray for borders and muted elements */
+  
+  /* State colors */
+  --color-info: #3b82f6;
+  --color-success: #16a34a;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  
+  /* UI shaping */
+  --radius-selector: 0.5rem;    /* Soft, friendly rounded corners */
+}
+
+@plugin "daisyui/theme" {
+  name: "dark";
+  /* Core brand colors adjusted for dark mode readability */
+  --color-primary: #ef4444;     /* Slightly lighter red to pop against dark backgrounds */
+  --color-secondary: #1e293b;   /* Muted slate for dark mode cards/elements */
+  --color-accent: #38bdf8;      /* Bright medical blue for visibility */
+  
+  /* Text and background hierarchy */
+  --color-neutral: #f8fafc;     /* Light text for dark backgrounds */
+  --color-base-100: #0f172a;    /* Deep slate background */
+  --color-base-200: #1e293b;    /* Slightly lighter slate for layered cards */
+  --color-base-300: #334155;    /* Accent slate for borders */
+  
+  /* State colors */
+  --color-info: #60a5fa;
+  --color-success: #22c55e;
+  --color-warning: #fbbf24;
+  --color-error: #f87171;
+  
+  /* UI shaping */
+  --radius-selector: 0.5rem;
+}
