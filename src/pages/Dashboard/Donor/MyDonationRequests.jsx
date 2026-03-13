@@ -105,9 +105,13 @@ const MyDonationRequests = () => {
                                             <button className="btn btn-sm btn-circle btn-ghost text-info" title="View Details">
                                                 <FiEye size={18} />
                                             </button>
-                                            <button className="btn btn-sm btn-circle btn-ghost text-success" title="Edit Request">
+                                            <Link 
+                                                to={`/dashboard/update-donation-request/${req._id}`} 
+                                                className="btn btn-sm btn-circle btn-ghost text-success" 
+                                                title="Edit Request"
+                                            >
                                                 <FiEdit size={18} />
-                                            </button>
+                                            </Link>
                                             <button 
                                                 onClick={() => handleDelete(req._id)} 
                                                 className="btn btn-sm btn-circle btn-ghost text-error" 

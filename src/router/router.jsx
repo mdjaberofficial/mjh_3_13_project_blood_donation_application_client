@@ -8,6 +8,9 @@ import PrivateRoute from "../routes/PrivateRoute";
 import Profile from "../pages/Dashboard/Profile/Profile";
 import CreateDonationRequest from "../pages/Dashboard/Donor/CreateDonationRequest";
 import MyDonationRequests from "../pages/Dashboard/Donor/MyDonationRequests";
+import AllUsers from "../pages/Dashboard/Admin/AllUsers";
+import AllBloodDonationRequests from "../pages/Dashboard/AdminVolunteer/AllBloodDonationRequests";
+import UpdateDonationRequest from "../pages/Dashboard/Donor/UpdateDonationRequest";
 
 const router = createBrowserRouter([
   {
@@ -47,6 +50,18 @@ const router = createBrowserRouter([
       {
         path: "/dashboard/my-donation-requests",
         element: <MyDonationRequests />
+      },
+      {
+        path: "/dashboard/all-users",
+        element: <AllUsers />
+      },
+      {
+        path: "/dashboard/all-blood-donation-request",
+        element: <AllBloodDonationRequests />
+      },
+      {
+      path: "update-donation-request/:id",
+      element: <UpdateDonationRequest />
       }
     ]
   }
