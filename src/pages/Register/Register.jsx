@@ -189,10 +189,10 @@ const Register = () => {
                         </div>
                     </form>
 
-                    <div className="divider text-base-content/50 mt-6 mb-4">OR</div>
-                    <button onClick={handleGoogleSignIn} className="btn btn-outline bg-amber-100 w-full rounded-full flex items-center gap-2 hover:bg-amber-200 hover:text-neutral border-base-300">
+                    {/* <div className="divider text-base-content/50 mt-6 mb-4">OR</div>
+                    <button onClick={handleGoogleSignIn} className="btn btn-outline w-full rounded-full flex items-center gap-2 hover:bg-base-200 hover:text-neutral border-base-300">
                         <FaGoogle className="text-lg text-error" /> Sign up with Google
-                    </button>
+                    </button> */}
                     
                     <p className="text-center text-neutral mt-6">
                         Already have an account? <Link to="/login" className="text-primary font-bold hover:underline">Sign In</Link>

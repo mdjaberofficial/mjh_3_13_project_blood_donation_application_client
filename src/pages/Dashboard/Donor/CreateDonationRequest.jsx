@@ -62,7 +62,7 @@ const CreateDonationRequest = () => {
             toast.success("Donation request created successfully!");
             reset();
             // We will redirect to 'My Donation Requests' once that page is built
-            // navigate('/dashboard/my-donation-requests'); 
+            navigate('/dashboard/my-donation-requests'); 
         } catch (error) {
             console.error(error);
             toast.error("Failed to create request.");
