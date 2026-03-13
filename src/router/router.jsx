@@ -1,6 +1,8 @@
 import { createBrowserRouter } from "react-router";
 import MainLayout from "../layouts/MainLayout";
 import DashboardLayout from "../layouts/DashboardLayout";
+import Register from "../pages/Register/Register";
+import Login from "../pages/Login/Login";
 
 const router = createBrowserRouter([
   {
@@ -13,11 +15,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/login",
-        element: <div className="p-8 text-center text-2xl">Login Page Content [cite: 44, 45]</div>,
+        element: <Login />,
       },
       {
         path: "/register",
-        element: <div className="p-8 text-center text-2xl">Register Page Content [cite: 26, 27]</div>,
+        element: <Register />,
       }
     ]
   },
