@@ -5,6 +5,7 @@ import Register from "../pages/Register/Register";
 import Login from "../pages/Login/Login";
 import Home from "../pages/Home/Home";
 import PrivateRoute from "../routes/PrivateRoute";
+import Profile from "../pages/Dashboard/Profile/Profile";
 
 const router = createBrowserRouter([
   {
@@ -35,7 +36,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/dashboard/profile",
-        element: <div className="text-2xl">Profile Page [cite: 50]</div>
+        element: <Profile />
       }
     ]
   }
