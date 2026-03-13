@@ -1,14 +1,11 @@
 import { Outlet } from "react-router";
+import Navbar from "../components/Shared/Navbar";
 
 const MainLayout = () => {
     return (
         <div>
-            {/* Temporary Navbar */}
-            <nav className="navbar bg-base-100 shadow-sm">
-                <div className="flex-1">
-                    <a className="btn btn-ghost text-xl text-primary">BloodConnect</a>
-                </div>
-            </nav>
+            
+            <Navbar />
             
             <main className="min-h-screen">
                 <Outlet />

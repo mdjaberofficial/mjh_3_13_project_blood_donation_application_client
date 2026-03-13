@@ -3,6 +3,7 @@ import MainLayout from "../layouts/MainLayout";
 import DashboardLayout from "../layouts/DashboardLayout";
 import Register from "../pages/Register/Register";
 import Login from "../pages/Login/Login";
+import Home from "../pages/Home/Home";
 
 const router = createBrowserRouter([
   {
@@ -11,7 +12,7 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <div className="p-8 text-center text-2xl">Home Page Content [cite: 184]</div>,
+        element: <Home />,
       },
       {
         path: "/login",
