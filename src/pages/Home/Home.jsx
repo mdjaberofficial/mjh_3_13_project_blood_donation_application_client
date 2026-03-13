@@ -1,9 +1,11 @@
 import Banner from "./Banner";
+import Stats from "./Stats";
 
 const Home = () => {
     return (
         <div>
             <Banner />
+            <Stats />
             
             {/* Placeholders for upcoming sections */}
             <div className="py-20 bg-base-200">
