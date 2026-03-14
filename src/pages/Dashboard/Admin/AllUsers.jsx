@@ -1,127 +1,109 @@
 import { useQuery } from '@tanstack/react-query';
-import toast from 'react-hot-toast';
-import { FiShield, FiUserCheck, FiLock, FiUnlock, FiUsers } from 'react-icons/fi';
 import useAxiosSecure from '../../../hooks/useAxiosSecure';
+import toast from 'react-hot-toast';
+import { FiUserCheck, FiUserX, FiShield, FiUser } from 'react-icons/fi';
 
 const AllUsers = () => {
     const axiosSecure = useAxiosSecure();
 
-    // Fetch all users
     const { data: users = [], isLoading, refetch } = useQuery({
         queryKey: ['all-users'],
         queryFn: async () => {
-            const { data } = await axiosSecure.get('/users');
+            const { data } = await axiosSecure.get('/all-users');
             return data;
         }
     });
 
-    // Handle Role Change
-    const handleRoleChange = async (id, newRole) => {
+    const handleUpdateRole = async (id, newRole) => {
         try {
-            const res = await axiosSecure.patch(`/users/role/${id}`, { role: newRole });
+            const res = await axiosSecure.patch(`/users/update-role/${id}`, { role: newRole });
             if (res.data.modifiedCount > 0) {
-                toast.success(`User role updated to ${newRole}!`);
+                toast.success(`User role updated to ${newRole}`);
                 refetch();
             }
         } catch (error) {
-            console.error(error);
-            toast.error("Failed to update role.");
+            toast.error("Failed to update role");
         }
     };
 
-    // Handle Status Change (Block/Unblock)
-    const handleStatusChange = async (id, currentStatus) => {
-        const newStatus = currentStatus === 'active' ? 'blocked' : 'active';
-        const confirmAction = window.confirm(`Are you sure you want to ${newStatus === 'blocked' ? 'block' : 'unblock'} this user?`);
-        
-        if (confirmAction) {
-            try {
-                const res = await axiosSecure.patch(`/users/status/${id}`, { status: newStatus });
-                if (res.data.modifiedCount > 0) {
-                    toast.success(`User is now ${newStatus}!`);
-                    refetch();
-                }
-            } catch (error) {
-                console.error(error);
-                toast.error("Failed to update status.");
+    const handleUpdateStatus = async (id, newStatus) => {
+        try {
+            const res = await axiosSecure.patch(`/users/update-status/${id}`, { status: newStatus });
+            if (res.data.modifiedCount > 0) {
+                toast.success(`User is now ${newStatus}`);
+                refetch();
             }
+        } catch (error) {
+            toast.error("Failed to update status");
         }
     };
 
-    if (isLoading) {
-        return <div className="flex justify-center mt-20"><span className="loading loading-spinner text-primary loading-lg"></span></div>;
-    }
+    if (isLoading) return <div className="text-center py-20"><span className="loading loading-spinner loading-lg"></span></div>;
 
     return (
-        <div className="bg-base-100 rounded-3xl shadow-xl overflow-hidden mt-8 p-6 md:p-8" data-aos="fade-up">
-            <div className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 border-b pb-4">
-                <div>
-                    <h2 className="text-3xl font-bold text-neutral flex items-center gap-2">
-                        <FiUsers className="text-primary" /> Manage All Users
-                    </h2>
-                    <p className="text-base-content/70 mt-1">Total Users: {users.length}</p>
-                </div>
+        <div className="bg-base-100 rounded-3xl shadow-xl p-6 md:p-10 mt-8" data-aos="fade-up">
+            <div className="mb-8">
+                <h2 className="text-3xl font-black text-neutral">User Management</h2>
+                <p className="text-base-content/60">Manage roles and access for all members.</p>
             </div>
 
-            <div className="overflow-x-auto">
-                <table className="table w-full">
-                    {/* head */}
-                    <thead className="bg-base-200 text-neutral">
+            <div className="overflow-x-auto rounded-2xl border border-base-200">
+                <table className="table table-zebra w-full">
+                    <thead className="bg-base-200 text-neutral font-bold h-14">
                         <tr>
-                            <th>User</th>
-                            <th>Email</th>
-                            <th>Status</th>
+                            <th>User Info</th>
                             <th>Role</th>
+                            <th>Status</th>
+                            <th className="text-center">Manage Role</th>
                             <th className="text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {users.map((user) => (
-                            <tr key={user._id} className="hover">
+                            <tr key={user._id} className="hover:bg-base-200/50 transition-colors">
                                 <td>
                                     <div className="flex items-center gap-3">
                                         <div className="avatar">
                                             <div className="mask mask-squircle w-12 h-12">
-                                                <img src={user.avatar || "https://i.ibb.co/MxgVsK4/default-avatar.png"} alt="Avatar" />
+                                                <img src={user.avatar} alt={user.name} />
                                             </div>
                                         </div>
                                         <div>
                                             <div className="font-bold">{user.name}</div>
+                                            <div className="text-xs opacity-50">{user.email}</div>
                                         </div>
                                     </div>
                                 </td>
-                                <td>{user.email}</td>
                                 <td>
-                                    <span className={`badge ${user.status === 'active' ? 'badge-success' : 'badge-error'} text-white capitalize`}>
+                                    <span className={`badge border-none font-bold text-xs uppercase px-3 py-3 ${
+                                        user.role === 'admin' ? 'bg-error/10 text-error' : 
+                                        user.role === 'volunteer' ? 'bg-primary/10 text-primary' : 'bg-success/10 text-success'
+                                    }`}>
+                                        {user.role}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span className={`badge badge-ghost font-medium text-xs ${user.status === 'blocked' ? 'text-error' : 'text-success'}`}>
                                         {user.status}
                                     </span>
                                 </td>
                                 <td>
-                                    <span className="badge badge-primary text-white capitalize">{user.role}</span>
-                                </td>
-                                <td>
-                                    <div className="flex justify-center items-center gap-2">
-                                        {/* Status Toggle */}
-                                        <button 
-                                            onClick={() => handleStatusChange(user._id, user.status)}
-                                            className={`btn btn-sm btn-circle ${user.status === 'active' ? 'btn-outline btn-error' : 'btn-success text-white'}`}
-                                            title={user.status === 'active' ? 'Block User' : 'Unblock User'}
-                                        >
-                                            {user.status === 'active' ? <FiLock /> : <FiUnlock />}
-                                        </button>
-
-                                        {/* Role Actions (Dropdown to save space) */}
-                                        <div className="dropdown dropdown-end">
-                                            <div tabIndex={0} role="button" className="btn btn-sm btn-outline btn-primary ml-2" title="Change Role">
-                                                <FiShield /> Role
-                                            </div>
-                                            <ul tabIndex={0} className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-40 mt-1">
-                                                <li><button onClick={() => handleRoleChange(user._id, 'donor')} disabled={user.role === 'donor'}>Make Donor</button></li>
-                                                <li><button onClick={() => handleRoleChange(user._id, 'volunteer')} disabled={user.role === 'volunteer'}>Make Volunteer</button></li>
-                                                <li><button onClick={() => handleRoleChange(user._id, 'admin')} disabled={user.role === 'admin'}>Make Admin</button></li>
-                                            </ul>
-                                        </div>
+                                    <div className="flex justify-center gap-2">
+                                        <button onClick={() => handleUpdateRole(user._id, 'admin')} className="btn btn-xs btn-outline btn-error" disabled={user.role === 'admin'} title="Make Admin"><FiShield /></button>
+                                        <button onClick={() => handleUpdateRole(user._id, 'volunteer')} className="btn btn-xs btn-outline btn-primary" disabled={user.role === 'volunteer'} title="Make Volunteer"><FiUser /></button>
+                                        <button onClick={() => handleUpdateRole(user._id, 'donor')} className="btn btn-xs btn-outline btn-success" disabled={user.role === 'donor'} title="Make Donor"><FiUserCheck /></button>
                                     </div>
+                                </td>
+                                <td className="text-center">
+                                    {user.status === 'active' ? (
+                                        <button onClick={() => handleUpdateStatus(user._id, 'blocked')} className="btn btn-sm btn-ghost text-error" title="Block User">
+                                            <FiUserX size={18} /> Block
+                                        </button>
+                                    ) : (
+                                        <button onClick={() => handleUpdateStatus(user._id, 'active')} className="btn btn-sm btn-ghost text-success" title="Unblock User">
+                                            <FiUserCheck size={18} /> Unblock
+                                        </button>
+                                    )}
                                 </td>
                             </tr>
                         ))}

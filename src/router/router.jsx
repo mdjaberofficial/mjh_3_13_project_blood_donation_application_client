@@ -14,6 +14,7 @@ import UpdateDonationRequest from "../pages/Dashboard/Donor/UpdateDonationReques
 import DonationRequests from "../pages/DonationRequests/DonationRequests";
 import RequestDetails from "../pages/DonationRequests/RequestDetails";
 import Search from "../pages/Search/Search";
+import AddBlog from "../pages/Dashboard/AdminVolunteer/ContentManagement/AddBlog";
 
 const router = createBrowserRouter([
   {
@@ -77,7 +78,12 @@ const router = createBrowserRouter([
       {
       path: "update-donation-request/:id",
       element: <UpdateDonationRequest />
-      }
+      },
+      {
+        path: "content-management/add-blog",
+        element: <AddBlog />
+      },
+    
     ]
   }
 ]);
