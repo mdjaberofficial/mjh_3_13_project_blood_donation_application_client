@@ -8,6 +8,7 @@ import {
 } from 'firebase/auth';
 import { auth } from '../firebase/firebase.init';
 import { AuthContext } from './AuthContext';
+import axios from 'axios'; // 👈 Make sure to import axios
 
 const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
@@ -35,19 +36,30 @@ const AuthProvider = ({ children }) => {
         });
     };
 
-
-
-
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, currentUser => {
             setUser(currentUser);
-            console.log('Current user state:', currentUser?.email);
             
-            // Note: We will implement the JWT token request here later 
-            // once the user is set, to send to the Express backend.
-
-            setLoading(false);
+            // --- 🚀 JWT IMPLEMENTATION 🚀 ---
+            if (currentUser) {
+                // Get token and store in local storage
+                const userInfo = { email: currentUser.email };
+                axios.post('https://mjh-3-13-project-blood-donation-app.vercel.app/jwt', userInfo)
+                    .then(res => {
+                        if (res.data.token) {
+                            localStorage.setItem('access-token', res.data.token);
+                            setLoading(false); // Stop loading ONLY after token is saved
+                        }
+                    })
+            } else {
+                // Remove token if user is logged out
+                localStorage.removeItem('access-token');
+                setLoading(false);
+            }
+            
+            console.log('Current user state:', currentUser?.email);
         });
+
         return () => {
             return unsubscribe();
         }

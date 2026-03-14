@@ -6,7 +6,7 @@ const Stats = () => {
     const { data: stats = {}, isLoading } = useQuery({
         queryKey: ['home-stats'],
         queryFn: async () => {
-            const { data } = await axios.get('http://localhost:3000/admin-stats');
+            const { data } = await axios.get('https://mjh-3-13-project-blood-donation-app.vercel.app/admin-stats');
             return data;
         }
     });

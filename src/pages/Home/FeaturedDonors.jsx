@@ -7,7 +7,7 @@ const FeaturedDonors = () => {
     const { data: donors = [], isLoading } = useQuery({
         queryKey: ['featured-donors'],
         queryFn: async () => {
-            const { data } = await axios.get('http://localhost:3000/featured-donors');
+            const { data } = await axios.get('https://mjh-3-13-project-blood-donation-app.vercel.app/featured-donors');
             return data;
         }
     });

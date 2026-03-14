@@ -3,12 +3,13 @@ import { Link } from 'react-router';
 import { FiMapPin, FiCalendar, FiClock, FiArrowRight } from 'react-icons/fi';
 import { FaDroplet } from 'react-icons/fa6';
 import axios from 'axios';
+import { Helmet } from 'react-helmet-async';
 
 const DonationRequests = () => {
     const { data: requests = [], isLoading } = useQuery({
         queryKey: ['public-pending-requests'],
         queryFn: async () => {
-            const { data } = await axios.get('http://localhost:3000/public-donation-requests');
+            const { data } = await axios.get('https://mjh-3-13-project-blood-donation-app.vercel.app/public-donation-requests');
             return data;
         }
     });
@@ -21,6 +22,9 @@ const DonationRequests = () => {
 
     return (
         <div className="min-h-screen bg-base-200 py-12 px-4">
+            <Helmet>
+                <title>Donation Requests | BloodConnect</title>
+            </Helmet>
             <div className="max-w-7xl mx-auto">
                 <div className="text-center mb-12" data-aos="fade-down">
                     <h1 className="text-4xl md:text-5xl font-bold text-neutral mb-4">Pending Donation Requests</h1>

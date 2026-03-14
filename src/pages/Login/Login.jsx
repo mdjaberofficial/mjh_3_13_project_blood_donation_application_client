@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 import { FiMail, FiLock } from 'react-icons/fi';
 import { FaHeartbeat } from 'react-icons/fa';
 import useAuth from '../../hooks/useAuth';
-
+import { Helmet } from 'react-helmet-async';
 const Login = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const { signIn } = useAuth();
@@ -26,6 +26,9 @@ const Login = () => {
 
     return (
         <div className="min-h-screen flex bg-base-100">
+            <Helmet>
+                <title>Login | BloodConnect</title>
+            </Helmet>
             {/* Left Side - Branding (Hidden on mobile) */}
             <div className="hidden lg:flex w-1/2 bg-primary text-white flex-col justify-center items-center p-12 relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-full bg-black opacity-10"></div>

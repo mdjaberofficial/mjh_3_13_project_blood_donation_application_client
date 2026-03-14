@@ -7,8 +7,7 @@ import { FaDroplet } from 'react-icons/fa6';
 
 const AllDonationRequests = () => {
     const axiosSecure = useAxiosSecure();
-    // Getting roleLoading is the key to stopping the infinite spinner
-    const [role, roleLoading] = useRole();
+    const [role, roleLoading] = useRole(); // Added roleLoading
 
     const { data: requests = [], isLoading, refetch } = useQuery({
         queryKey: ['admin-all-requests'],
@@ -30,29 +29,21 @@ const AllDonationRequests = () => {
         }
     };
 
-        const handleDelete = async (id) => {
-            // 1. Browser confirmation to prevent accidental clicks
-            if (window.confirm("Are you sure you want to permanently delete this donation request? This action cannot be undone.")) {
-                const loadingToast = toast.loading("Deleting request...");
-                try {
-                    // 2. Call the backend delete route
-                    const res = await axiosSecure.delete(`/donation-requests/${id}`);
-                    
-                    toast.dismiss(loadingToast);
-                    
-                    if (res.data.deletedCount > 0) {
-                        toast.success("Request successfully deleted from the system.");
-                        // 3. Refresh the TanStack Query data
-                        refetch();
-                    }
-                } catch (error) {
-                    toast.dismiss(loadingToast);
-                    toast.error(error.response?.data?.message || "Failed to delete the request.");
+    const handleDelete = async (id) => {
+        if (window.confirm("Permanently delete this request?")) {
+            try {
+                const res = await axiosSecure.delete(`/donation-requests/${id}`);
+                if (res.data.deletedCount > 0) {
+                    toast.success("Request removed");
+                    refetch();
                 }
+            } catch (error) {
+                toast.error("Delete failed");
             }
-        };
+        }
+    };
 
-    // CRITICAL: We check for both data loading and role verification
+    // Wait for BOTH data and role to be ready
     if (isLoading || roleLoading) {
         return (
             <div className="min-h-[400px] flex justify-center items-center">
@@ -74,7 +65,7 @@ const AllDonationRequests = () => {
                 <table className="table table-zebra w-full">
                     <thead className="bg-base-200 h-16 text-neutral font-bold">
                         <tr>
-                            <th className="text-left">Recipient & Location</th>
+                            <th>Recipient & Location</th>
                             <th>Blood Group</th>
                             <th>Date & Time</th>
                             <th>Status</th>
@@ -85,19 +76,17 @@ const AllDonationRequests = () => {
                     <tbody>
                         {requests.length === 0 ? (
                             <tr>
-                                <td colSpan="6" className="text-center py-20 opacity-50 italic">
-                                    No donation requests found in the system.
-                                </td>
+                                <td colSpan="6" className="text-center py-10 opacity-50">No donation requests found.</td>
                             </tr>
                         ) : (
                             requests.map((req) => (
-                                <tr key={req._id} className="hover:bg-base-200/50 transition-colors">
+                                <tr key={req._id} className="hover:bg-base-200/50 transition-colors text-center md:text-left">
                                     <td>
                                         <div className="font-bold text-neutral">{req.recipientName}</div>
                                         <div className="text-xs opacity-60">{req.recipientUpazila}, {req.recipientDistrict}</div>
                                     </td>
                                     <td>
-                                        <div className="flex items-center gap-2 justify-center">
+                                        <div className="flex items-center gap-2 justify-center md:justify-start">
                                             <FaDroplet className="text-error" />
                                             <span className="font-black text-lg">{req.bloodGroup}</span>
                                         </div>
@@ -130,11 +119,7 @@ const AllDonationRequests = () => {
                                     </td>
                                     {role === 'admin' && (
                                         <td className="text-center">
-                                            <button 
-                                                onClick={() => handleDelete(req._id)} 
-                                                className="btn btn-sm btn-circle btn-ghost text-error hover:bg-error/10 transition-colors"
-                                                title="Delete Request"
-                                            >
+                                            <button onClick={() => handleDelete(req._id)} className="btn btn-sm btn-circle btn-ghost text-error">
                                                 <FiTrash2 size={18} />
                                             </button>
                                         </td>

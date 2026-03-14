@@ -15,6 +15,13 @@ import DonationRequests from "../pages/DonationRequests/DonationRequests";
 import RequestDetails from "../pages/DonationRequests/RequestDetails";
 import Search from "../pages/Search/Search";
 import AddBlog from "../pages/Dashboard/AdminVolunteer/ContentManagement/AddBlog";
+import ContentManagement from "../pages/Dashboard/AdminVolunteer/ContentManagement/ContentManagement";
+import Blog from "../pages/Blog/Blog";
+import AllDonationRequests from "../pages/Dashboard/AdminVolunteer/AllDonationRequests";
+import AdminHome from "../pages/Dashboard/Admin/AdminHome";
+import DashboardIndex from "../pages/Dashboard/DashboardIndex";
+import EditBlog from "../pages/Dashboard/Admin/EditBlog";
+import DonationDetails from "../pages/DonationRequests/RequestDetails";
 
 const router = createBrowserRouter([
   {
@@ -45,6 +52,18 @@ const router = createBrowserRouter([
       path: "/search",
       element: <Search />
       },
+      {
+        path: "/blog",
+        element: <Blog />
+      },
+      {
+        path: "all-blood-donation-request",
+        element: <AllDonationRequests />
+      },
+      {
+       path: "donation-request-details/:id",
+       element: <DonationDetails />
+      }
     ]
   },
   {
@@ -52,8 +71,8 @@ const router = createBrowserRouter([
     element: <PrivateRoute><DashboardLayout /></PrivateRoute>,
     children: [
       {
-        path: "/dashboard",
-        element: <div className="text-2xl">Dashboard Home [cite: 60, 107, 168]</div>
+        index: true, // This makes it the default view when hitting /dashboard
+        element: <DashboardIndex />
       },
       {
         path: "/dashboard/profile",
@@ -83,6 +102,14 @@ const router = createBrowserRouter([
         path: "content-management/add-blog",
         element: <AddBlog />
       },
+      {
+       path: "content-management",
+       element: <ContentManagement />
+      },
+      {
+       path: "content-management/edit-blog/:id",
+       element: <EditBlog />
+      }
     
     ]
   }

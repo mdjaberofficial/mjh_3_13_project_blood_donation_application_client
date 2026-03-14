@@ -8,6 +8,7 @@ import router from './router/router.jsx'
 import AuthProvider from './contexts/AuthProvider.jsx'
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import { HelmetProvider } from 'react-helmet-async';
 
 // Initialize AOS right above the queryClient setup:
 AOS.init();
@@ -17,11 +18,12 @@ const queryClient = new QueryClient()
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <AuthProvider>
-      <QueryClientProvider client={queryClient}>
-        <Toaster position="top-center" reverseOrder={false} />
-        <RouterProvider router={router} />
-      </QueryClientProvider>
-    </AuthProvider>
+    <HelmetProvider>
+       <AuthProvider>
+          <QueryClientProvider client={queryClient}>
+             <RouterProvider router={router} />
+          </QueryClientProvider>
+       </AuthProvider>
+    </HelmetProvider>
   </StrictMode>,
 )

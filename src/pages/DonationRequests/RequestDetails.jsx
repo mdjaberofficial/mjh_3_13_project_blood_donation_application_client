@@ -1,142 +1,131 @@
-import { useQuery } from '@tanstack/react-query';
-import { useParams, useNavigate } from 'react-router';
-import { FiMapPin, FiCalendar, FiClock, FiUser, FiMail } from 'react-icons/fi';
-import { FaHospital, FaDroplet } from 'react-icons/fa6';
-import toast from 'react-hot-toast';
-import axios from 'axios';
-import useAuth from '../../hooks/useAuth';
-import useAxiosSecure from '../../hooks/useAxiosSecure';
+import { useQuery } from "@tanstack/react-query";
+import { useParams, useNavigate } from "react-router";
+import axios from "axios";
+import useAxiosSecure from "../../hooks/useAxiosSecure"; // 👈 Import your secure hook
+import { FiMapPin, FiCalendar, FiClock, FiUser, FiActivity } from "react-icons/fi";
+import { FaDroplet } from "react-icons/fa6";
+import useAuth from "../../hooks/useAuth";
+import toast from "react-hot-toast";
 
 const RequestDetails = () => {
     const { id } = useParams();
     const { user } = useAuth();
+    const axiosSecure = useAxiosSecure(); // 👈 Initialize
     const navigate = useNavigate();
-    const axiosSecure = useAxiosSecure();
 
     const { data: request, isLoading, refetch } = useQuery({
-        queryKey: ['request-details', id],
+        queryKey: ['donation-request', id],
         queryFn: async () => {
-            const { data } = await axios.get(`http://localhost:3000/donation-requests/${id}`);
+            const { data } = await axios.get(`https://mjh-3-13-project-blood-donation-app.vercel.app/donation-requests/${id}`);
             return data;
         }
     });
 
-    const handleConfirmDonation = async () => {
+    const handleDonate = () => {
+        if (!user) {
+            toast.error("Please login to donate!");
+            return navigate("/login");
+        }
+        document.getElementById('donation_modal').showModal();
+    };
+
+    // --- 🚀 NEW CONFIRM LOGIC 🚀 ---
+    const handleConfirm = async () => {
         try {
-            const donationInfo = {
+            const donorInfo = {
                 donorName: user?.displayName,
                 donorEmail: user?.email
             };
-            
-            const res = await axiosSecure.patch(`/donation-requests/accept/${id}`, donationInfo);
+
+            const res = await axiosSecure.patch(`/donation-requests/accept/${id}`, donorInfo);
             
             if (res.data.modifiedCount > 0) {
-                toast.success("Thank you! You have accepted this request.");
-                document.getElementById('donation_modal').close();
-                refetch();
-                navigate('/donation-requests');
+                toast.success("Thank you! You are now the donor for this request.");
+                document.getElementById('donation_modal').close(); // Close modal
+                refetch(); // Update UI to show 'In Progress'
             }
         } catch (error) {
             toast.error("Something went wrong. Please try again.");
         }
     };
 
-    if (isLoading) return <div className="text-center py-20"><span className="loading loading-spinner loading-lg"></span></div>;
+    if (isLoading) return <div className="min-h-screen flex justify-center items-center"><span className="loading loading-spinner loading-lg text-error"></span></div>;
+
+    // Optional chaining to prevent crashes
+    const bloodGroup = request?.bloodGroup || "N/A";
 
     return (
-        <div className="min-h-screen bg-base-200 py-12 px-4">
-            <div className="max-w-4xl mx-auto bg-base-100 rounded-3xl shadow-2xl overflow-hidden" data-aos="fade-up">
-                {/* Top Banner */}
-                <div className="bg-error p-8 text-white flex flex-col md:flex-row justify-between items-center gap-6">
-                    <div className="flex items-center gap-5">
-                        <div className="bg-white/20 p-4 rounded-2xl backdrop-blur-md">
-                            <FaDroplet className="text-5xl" />
-                        </div>
+        <div className="bg-base-200 min-h-screen py-20 px-4">
+            <div className="max-w-4xl mx-auto">
+                <div className="bg-base-100 rounded-[3rem] shadow-2xl overflow-hidden border border-base-300">
+                    {/* Header Banner */}
+                    <div className="bg-gradient-to-r from-error to-red-700 p-12 text-white flex flex-col md:flex-row justify-between items-center gap-6">
                         <div>
-                            <h1 className="text-3xl font-bold">Blood Needed: {request.bloodGroup}</h1>
-                            <p className="opacity-90">Requested by: {request.requesterName}</p>
+                            <h2 className="text-4xl font-black mb-2">Donation Request</h2>
+                            <p className="opacity-80 font-medium italic">"Your blood can give someone another chance at life."</p>
                         </div>
-                    </div>
-                    <div className="text-center md:text-right">
-                        <span className="badge badge-outline text-white border-white px-4 py-3">{request.status.toUpperCase()}</span>
-                    </div>
-                </div>
-
-                <div className="p-8 md:p-12">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                        {/* Patient Info */}
-                        <div className="space-y-6">
-                            <h3 className="text-xl font-bold border-b pb-2 text-neutral">Recipient Information</h3>
-                            <div className="space-y-4">
-                                <div className="flex items-center gap-4 text-lg">
-                                    <FiUser className="text-error" /> <span className="font-semibold">{request.recipientName}</span>
-                                </div>
-                                <div className="flex items-center gap-4">
-                                    <FaHospital className="text-error" /> <span>{request.hospitalName}</span>
-                                </div>
-                                <div className="flex items-center gap-4">
-                                    <FiMapPin className="text-error" /> <span>{request.fullAddress}, {request.recipientUpazila}, {request.recipientDistrict}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Schedule Info */}
-                        <div className="space-y-6">
-                            <h3 className="text-xl font-bold border-b pb-2 text-neutral">Schedule</h3>
-                            <div className="space-y-4">
-                                <div className="flex items-center gap-4 text-lg">
-                                    <FiCalendar className="text-error" /> <span>{request.donationDate}</span>
-                                </div>
-                                <div className="flex items-center gap-4 text-lg">
-                                    <FiClock className="text-error" /> <span>{request.donationTime}</span>
-                                </div>
-                            </div>
+                        <div className="bg-white text-error w-24 h-24 rounded-3xl flex flex-col items-center justify-center shadow-lg">
+                            <FaDroplet size={30} />
+                            <span className="text-2xl font-black">{bloodGroup}</span>
                         </div>
                     </div>
 
-                    <div className="mt-10 p-6 bg-base-200 rounded-2xl italic text-base-content/70 border-l-4 border-error">
-                        "{request.requestMessage}"
+                    {/* Content Section (Simplified for space) */}
+                    <div className="p-8 md:p-12 grid grid-cols-1 md:grid-cols-2 gap-10">
+                        <div className="space-y-4">
+                            <h3 className="text-xl font-bold text-neutral border-b pb-2 flex items-center gap-2"><FiUser className="text-error" /> Patient: {request?.recipientName}</h3>
+                            <p className="text-sm opacity-60 font-medium">{request?.hospitalName} - {request?.recipientDistrict}</p>
+                        </div>
+                        <div className="space-y-4">
+                            <h3 className="text-xl font-bold text-neutral border-b pb-2 flex items-center gap-2"><FiActivity className="text-error" /> Status: {request?.status}</h3>
+                            <p className="text-sm opacity-60 font-medium italic">"{request?.requestMessage}"</p>
+                        </div>
                     </div>
 
-                    {/* Conditional Action Button */}
-                    <div className="mt-12 text-center">
-                        {user ? (
-                            <button 
-                                onClick={() => document.getElementById('donation_modal').showModal()}
-                                className="btn btn-error text-white btn-wide rounded-full text-lg shadow-xl shadow-error/20"
-                                disabled={request.status !== 'pending'}
-                            >
-                                {request.status === 'pending' ? "Donate Now" : "Request Already In Progress"}
-                            </button>
-                        ) : (
-                            <div className="alert alert-warning rounded-2xl shadow-md">
-                                <span>Please <button onClick={() => navigate('/login')} className="font-bold underline">Login</button> to accept this donation request.</span>
-                            </div>
-                        )}
+                    {/* Button */}
+                    <div className="p-8 md:p-12 bg-base-50 border-t border-base-200 text-center">
+                        <button 
+                            onClick={handleDonate}
+                            className={`btn btn-lg w-full md:w-auto px-12 text-white rounded-2xl shadow-xl border-none ${request?.status === 'pending' ? 'btn-error shadow-error/20' : 'btn-disabled'}`}
+                            disabled={request?.status !== 'pending'}
+                        >
+                            {request?.status === 'pending' ? 'Donate Now' : 'Request Taken'}
+                        </button>
                     </div>
                 </div>
             </div>
 
-            {/* Donation Confirmation Modal */}
+            {/* Modal */}
             <dialog id="donation_modal" className="modal modal-bottom sm:modal-middle">
-                <div className="modal-box rounded-3xl">
-                    <h3 className="font-bold text-2xl text-center mb-6">Confirm Your Donation</h3>
-                    <div className="space-y-4 bg-base-200 p-6 rounded-2xl">
-                        <div className="flex items-center gap-3">
-                            <FiUser className="text-primary" /> <p className="font-medium">{user?.displayName}</p>
-                        </div>
-                        <div className="flex items-center gap-3">
-                            <FiMail className="text-primary" /> <p className="font-medium">{user?.email}</p>
-                        </div>
+                <div className="modal-box rounded-[2.5rem] p-10">
+                    <h3 className="font-black text-2xl">Confirm Your Donation</h3>
+                    <div className="py-4 space-y-2 text-base-content/70">
+                        <p><strong>Your Name:</strong> {user?.displayName}</p>
+                        <p><strong>Your Email:</strong> {user?.email}</p>
+                        <hr className="my-2" />
+                        <p>By clicking confirm, you agree to contact the requester and arrive at the hospital on time.</p>
                     </div>
-                    <p className="py-4 text-center text-base-content/70">
-                        By clicking confirm, you agree to donate blood for <b>{request?.recipientName}</b> at <b>{request?.hospitalName}</b>.
-                    </p>
-                    <div className="modal-action flex justify-center gap-4">
-                        <button onClick={handleConfirmDonation} className="btn btn-error text-white px-10 rounded-full">Confirm</button>
-                        <form method="dialog">
-                            <button className="btn btn-ghost rounded-full">Cancel</button>
-                        </form>
+                    {/* Modal Action Area */}
+                    <div className="modal-action">
+                        <div className="flex gap-4 w-full">
+                            {/* Cancel Button: Uses the dialog close method */}
+                            <button 
+                                type="button"
+                                onClick={() => document.getElementById('donation_modal').close()} 
+                                className="btn flex-1 rounded-2xl border-none bg-base-300"
+                            >
+                                Cancel
+                            </button>
+
+                            {/* Confirm Button: Calls your function to update the DB */}
+                            <button 
+                                type="button"
+                                onClick={handleConfirm} 
+                                className="btn btn-primary flex-1 text-white rounded-2xl shadow-lg shadow-primary/20 border-none"
+                            >
+                                Confirm
+                            </button>
+                        </div>
                     </div>
                 </div>
             </dialog>

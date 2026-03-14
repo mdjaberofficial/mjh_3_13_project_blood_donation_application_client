@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 import axios from 'axios';
 import { FiUser, FiMail, FiLock } from 'react-icons/fi';
 import { FaDroplet } from 'react-icons/fa6';
-import { FaGoogle } from 'react-icons/fa';
+import { Helmet } from 'react-helmet-async';
 import useAuth from '../../hooks/useAuth';
 
 const image_hosting_key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
@@ -74,7 +74,7 @@ const Register = () => {
                     status: 'active'
                 };
 
-                await axios.post('http://localhost:3000/users', userInfo);
+                await axios.post('https://mjh-3-13-project-blood-donation-app.vercel.app/users', userInfo);
                 toast.success('Registration successful! Welcome to the community.');
                 navigate('/');
             }
@@ -84,33 +84,11 @@ const Register = () => {
         }
     };
 
-    const handleGoogleSignIn = async () => {
-        try {
-            const result = await signInWithGoogle();
-            const user = result.user;
-            
-            const userInfo = {
-                name: user.displayName,
-                email: user.email,
-                avatar: user.photoURL,
-                bloodGroup: "Not Set",
-                district: "Not Set",
-                upazila: "Not Set",
-                role: 'donor',
-                status: 'active'
-            };
-
-            await axios.post('http://localhost:3000/users', userInfo);
-            toast.success('Signed in with Google!');
-            navigate('/');
-        } catch (error) {
-            console.error(error);
-            toast.error("Google sign-in failed.");
-        }
-    };
-
     return (
         <div className="min-h-screen flex items-center justify-center bg-base-200 p-4 md:p-8">
+            <Helmet>
+                <title>Register | BloodConnect</title>
+            </Helmet>
             <div className="w-full max-w-4xl bg-base-100 rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row" data-aos="zoom-in" data-aos-duration="800">
                 {/* Visual Banner */}
                 <div className="md:w-1/3 bg-primary p-8 text-white flex flex-col justify-center items-center relative">

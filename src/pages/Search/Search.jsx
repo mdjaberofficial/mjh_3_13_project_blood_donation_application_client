@@ -27,7 +27,7 @@ const Search = () => {
     const { data: donors = [], isLoading, refetch } = useQuery({
         queryKey: ['search-donors', filter],
         queryFn: async () => {
-            const { data } = await axios.get(`http://localhost:3000/donor-search`, { params: filter });
+            const { data } = await axios.get(`https://mjh-3-13-project-blood-donation-app.vercel.app/donor-search`, { params: filter });
             return data;
         },
         enabled: false // Only fetch when user clicks search
